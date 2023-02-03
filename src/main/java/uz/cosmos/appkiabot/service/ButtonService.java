@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import uz.cosmos.appkiabot.bot.BotConstant;
+import uz.cosmos.appkiabot.payload.ResKiaModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,22 @@ public class ButtonService {
         row3.add(generateButton(BotConstant.YURIDIKUZ, BotConstant.YURIDIKRU, "yuridik#", language));
         rows.add(row3);
 
+
+        replyKeyboardMarkup.setKeyboard(rows);
+        return replyKeyboardMarkup;
+    }
+
+    public ReplyKeyboard sendModels(List<ResKiaModel> modelList, String lang) {
+        InlineKeyboardMarkup replyKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        List<InlineKeyboardButton> row = new ArrayList<>();
+
+        for (ResKiaModel resKiaModel : modelList) {
+            row.add(generateButton(resKiaModel.getName(), resKiaModel.getName(), "modelInfo#" + resKiaModel.getUrl() + "#", lang));
+            rows.add(row);
+            row = new ArrayList<>();
+        }
 
         replyKeyboardMarkup.setKeyboard(rows);
         return replyKeyboardMarkup;

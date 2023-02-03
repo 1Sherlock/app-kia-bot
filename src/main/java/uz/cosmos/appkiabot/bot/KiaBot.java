@@ -70,7 +70,10 @@ public class KiaBot extends TelegramLongPollingBot {
                     botService.setLang(update, data.endsWith("uzbek") ? "uz": "ru");
                 } else if (data.startsWith("location#")){
                     execute(botService.deleteTopMessage(update));
-                    botService.sendLocation(update, data.endsWith("uzbek") ? "uz": "ru");
+                    botService.sendLocation(update, data.endsWith("uz") ? "uz": "ru");
+                } else if (data.startsWith("models#")){
+                    execute(botService.deleteTopMessage(update));
+                    botService.getModels(update, data.endsWith("uz") ? "uz": "ru");
                 }
 
             } catch (Exception e) {

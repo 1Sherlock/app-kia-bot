@@ -13,12 +13,15 @@ import uz.cosmos.appkiabot.bot.BotConstant;
 import uz.cosmos.appkiabot.bot.KiaBot;
 import uz.cosmos.appkiabot.entity.TelegramChat;
 import uz.cosmos.appkiabot.entity.enums.TelegramChatStatus;
+import uz.cosmos.appkiabot.payload.ResKia;
+import uz.cosmos.appkiabot.payload.ResKiaModel;
 import uz.cosmos.appkiabot.repository.TelegramChatRepository;
 
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class BotService {
@@ -30,6 +33,9 @@ public class BotService {
 
     @Autowired
     TelegramChatRepository telegramChatRepository;
+
+    @Autowired
+    RequestService requestService;
 
     public DeleteMessage deleteTopMessage(Update update) {
         DeleteMessage deleteMessage = new DeleteMessage();
@@ -114,6 +120,25 @@ public class BotService {
 
         sendMessage.setText((lang.equals("ru") ? BotConstant.MENUTEXTRU : BotConstant.MENUTEXTUZ));
         sendMessage.setReplyMarkup(buttonService.menuButton(lang, isAdmin));
+        kiaBot.execute(sendMessage);
+    }
+
+    public void getModels(Update update, String lang) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, TelegramApiException {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
+        sendMessage.setText(lang.equals("ru") ? BotConstant.CHOOSEMODELRU : BotConstant.CHOOSEMODELUZ);
+        ResKia[] groups = requestService.getModels().getTypes();
+        List<ResKiaModel> modelList = new ArrayList<>();
+        for (ResKia group : groups) {
+            List<ResKiaModel> models = group.getModels();
+            for (ResKiaModel model : models) {
+                if (model.getSoon() == 0 && model.getTesting() == 0){
+                    modelList.add(model);
+                }
+            }
+        }
+
+        sendMessage.setReplyMarkup(buttonService.sendModels(modelList, lang));
         kiaBot.execute(sendMessage);
     }
 }

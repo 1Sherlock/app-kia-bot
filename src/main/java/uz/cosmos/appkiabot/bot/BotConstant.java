@@ -41,4 +41,6 @@ public interface BotConstant {
     String LOCATIONTEXTRU = "\uD83D\uDCCD Адрес Автосалона \uD83D\uDC47";
     String LOCATIONTEXTUZ = "\uD83D\uDCCD Bizning manzilimiz \uD83D\uDC47";
 
+    String CHOOSEMODELUZ = "Iltimos, kerakli modelni tanlang:";
+    String CHOOSEMODELRU = "Пожалуйста, выберите модель:";
 }
