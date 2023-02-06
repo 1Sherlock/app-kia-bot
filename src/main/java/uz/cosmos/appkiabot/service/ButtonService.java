@@ -8,8 +8,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import uz.cosmos.appkiabot.bot.BotConstant;
-import uz.cosmos.appkiabot.payload.ResKiaModel;
-import uz.cosmos.appkiabot.payload.ResKiaModelInfo;
+import uz.cosmos.appkiabot.entity.AutoModel;
+import uz.cosmos.appkiabot.entity.AutoModification;
 import uz.cosmos.appkiabot.payload.ResKiaModification;
 
 import java.util.ArrayList;
@@ -97,14 +97,14 @@ public class ButtonService {
         return replyKeyboardMarkup;
     }
 
-    public ReplyKeyboard sendModels(List<ResKiaModel> modelList, String lang) {
+    public ReplyKeyboard sendModels(List<AutoModel> modelList, String lang) {
         InlineKeyboardMarkup replyKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
 
-        for (ResKiaModel resKiaModel : modelList) {
-            row.add(generateButton(resKiaModel.getName(), resKiaModel.getName(), "modelInfo#" + resKiaModel.getUrl() + "#", lang));
+        for (AutoModel resKiaModel : modelList) {
+            row.add(generateButton(resKiaModel.getName(), resKiaModel.getName(), "modelInfo#" + resKiaModel.getModelId() + "#", lang));
             rows.add(row);
             row = new ArrayList<>();
         }
@@ -115,7 +115,7 @@ public class ButtonService {
         return replyKeyboardMarkup;
     }
 
-    public ReplyKeyboard autoModelGoBack(String lang, String modelUrl, ResKiaModelInfo modelInfo) {
+    public ReplyKeyboard autoModelGoBack(String lang, List<AutoModification> modelInfo) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
@@ -126,13 +126,166 @@ public class ButtonService {
         List<InlineKeyboardButton> row3 = new ArrayList<>();
         List<InlineKeyboardButton> row4 = new ArrayList<>();
 
-        for (ResKiaModification autoModification : modelInfo.getCompls()) {
-            row.add(generateButton(autoModification.getName(), autoModification.getName(), "automodificationinfo#" + modelUrl + "#" + autoModification.getName(), lang));
+        for (AutoModification autoModification : modelInfo) {
+            row.add(generateButton(autoModification.getName(), autoModification.getName(), "automodificationinfo#" + autoModification.getModificationId() + "#", lang));
             rows.add(row);
             row = new ArrayList<>();
         }
 
-        row.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, "models#" , lang));
+        row.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, "models#", lang));
+
+        rows.add(row);
+
+        inlineKeyboardMarkup.setKeyboard(rows);
+        return inlineKeyboardMarkup;
+    }
+
+    public ReplyKeyboard autoModifications(String language, AutoModification modification, String type) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
+        List<InlineKeyboardButton> row2 = new ArrayList<>();
+        List<InlineKeyboardButton> row3 = new ArrayList<>();
+        List<InlineKeyboardButton> row5 = new ArrayList<>();
+        List<InlineKeyboardButton> row4 = new ArrayList<>();
+
+        row4.add(generateButton(BotConstant.CREDITCALCULATORUZ, BotConstant.CREDITCALCULATORRU, "creditmodifications#" + modification.getModificationId() + "#", language));
+        row2.add(generateButton(BotConstant.SENDAPPUZ, BotConstant.SENDAPPRU, "sendapp#" + modification.getModificationId() + "#", language));
+        row3.add(generateButton(BotConstant.NASIYAUZ, BotConstant.NASIYARU, "nasiyamodifications#" + modification.getModificationId() + "#", language));
+        row5.add(generateButton(BotConstant.INFOUZ, BotConstant.INFORU, "downloadinfo#" + modification.getModificationId() + "#", language));
+
+        row1.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, "modelInfo#" + type + "#", language));
+
+        rows.add(row4);
+        rows.add(row2);
+        rows.add(row3);
+        rows.add(row5);
+        rows.add(row1);
+
+        inlineKeyboardMarkup.setKeyboard(rows);
+        return inlineKeyboardMarkup;
+    }
+
+    public ReplyKeyboard enterFIO(String language) {
+        List<KeyboardRow> rows = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+
+        KeyboardButton keyboardButton = new KeyboardButton(language.equals("ru") ? BotConstant.CANCELRU : BotConstant.CANCELUZ);
+        row.add(keyboardButton);
+        rows.add(row);
+
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setKeyboard(rows);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        return replyKeyboardMarkup;
+    }
+
+    public ReplyKeyboard creditPeriods(String language, String modificationId, AutoModification modification) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
+        List<InlineKeyboardButton> row2 = new ArrayList<>();
+
+        row2.add(generateButton(12 + " " + BotConstant.MONTHUZ, 12 + " " + BotConstant.MONTHRU, "avtokreditmonth#" + modificationId + "#" + 12 + "#", language));
+        rows.add(row2);
+
+        row.add(generateButton(36 + " " + BotConstant.MONTHUZ, 36 + " " + BotConstant.MONTHRU, "avtokreditmonth#" + modificationId + "#" + 36 + "#", language));
+        row.add(generateButton(48 + " " + BotConstant.MONTHUZ, 48 + " " + BotConstant.MONTHRU, "avtokreditmonth#" + modificationId + "#" + 48 + "#", language));
+        row.add(generateButton(60 + " " + BotConstant.MONTHUZ, 60 + " " + BotConstant.MONTHRU, "avtokreditmonth#" + modificationId + "#" + 60 + "#", language));
+
+        row1.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, "automodificationinfo#" + modificationId + "#", language));
+
+        rows.add(row);
+        rows.add(row1);
+
+        inlineKeyboardMarkup.setKeyboard(rows);
+        return inlineKeyboardMarkup;
+
+    }
+
+    public ReplyKeyboard creditFirsts(String language, String modificationId, String kreditMonth, AutoModification modification) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
+
+        if(!kreditMonth.equals("12")){
+            row.add(generateButton(30 + "%", 30 + "%", "avtokreditfirst#" + modificationId + "#" + kreditMonth + "#" + 30 + "#", language));
+            row.add(generateButton(40 + "%", 40 + "%", "avtokreditfirst#" + modificationId + "#" + kreditMonth + "#" + 40 + "#", language));
+        }
+        row.add(generateButton(50 + "%", 50 + "%", "avtokreditfirst#" + modificationId + "#" + kreditMonth + "#" + 50 + "#", language));
+
+        row1.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, "creditmodifications#" + modificationId + "#", language));
+
+        rows.add(row);
+        rows.add(row1);
+
+        inlineKeyboardMarkup.setKeyboard(rows);
+        return inlineKeyboardMarkup;
+    }
+
+    public ReplyKeyboard creditType(String language, String kreditSumm, String kreditMonth, String kreditFirst, AutoModification modification) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
+
+        if (!kreditMonth.equals("12")){
+            row.add(generateButton(BotConstant.DIFFERENSIALUZ, BotConstant.DIFFERENSIALRU, "avtokredittype#" + kreditSumm + "#" + kreditMonth + "#" + kreditFirst + "#diff#", language));
+        }
+
+        row.add(generateButton(BotConstant.ANNUITETUZ, BotConstant.ANNUITETRU, "avtokredittype#" + kreditSumm + "#" + kreditMonth + "#" + kreditFirst + "#ann#", language));
+
+        row1.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, "avtokreditmonth#" + kreditSumm + "#" + kreditMonth + "#", language));
+
+        rows.add(row);
+        rows.add(row1);
+
+        inlineKeyboardMarkup.setKeyboard(rows);
+        return inlineKeyboardMarkup;
+    }
+
+    public ReplyKeyboard creditPeriodsType(String language, String modificationId, String kreditMonth, String kreditFirst, String kreditType) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
+//        List<InlineKeyboardButton> row2 = new ArrayList<>();
+        List<InlineKeyboardButton> row3 = new ArrayList<>();
+        List<InlineKeyboardButton> row4 = new ArrayList<>();
+
+        row1.add(generateButton("Matn ko'rinishida", "В текстовой форме", "avtocreditcalc#" + modificationId + "#" + kreditMonth + "#" + kreditFirst + "#" + kreditType + "#" + "text#", language));
+//        row2.add(generateButton("PDF", "PDF", "avtocreditcalc#" + modificationId + "#" + kreditMonth + "#" + kreditFirst + "#" + kreditType + "#" + "pdf#", language));
+        row3.add(generateButton("Jadval ko'rinishida", "В табличной форме", "avtocreditcalc#" + modificationId + "#" + kreditMonth + "#" + kreditFirst + "#" + kreditType + "#" + "excel#", language));
+        row4.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, "avtokreditfirst#" + modificationId + "#" + kreditMonth + "#" + kreditFirst + "#", language));
+
+        rows.add(row1);
+//        rows.add(row2);
+        rows.add(row3);
+        rows.add(row4);
+
+        inlineKeyboardMarkup.setKeyboard(rows);
+        return inlineKeyboardMarkup;
+    }
+
+    public ReplyKeyboard goBack(String language, String query) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+
+        List<InlineKeyboardButton> row = new ArrayList<>();
+
+        row.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, query, language));
 
         rows.add(row);
 

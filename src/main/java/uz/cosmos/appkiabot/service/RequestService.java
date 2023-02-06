@@ -38,4 +38,8 @@ public class RequestService {
     public ResKiaModelInfo getModelInfo(String infoPath) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         return restTemplate().getForObject(this.API_PATH_KIA + infoPath, ResKiaModelInfo.class);
     }
+
+    public byte[] getImage(String sha) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        return restTemplate().getForObject(sha, byte[].class);
+    }
 }

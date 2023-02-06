@@ -22,4 +22,8 @@ public class TelegramChat  extends AbstractEntity {
     private String phoneNumber;
 
     private String fullName;
+
+    private String selectedModification;
+    private String selectedMonth;
+    private String selectedFirst;
 }
