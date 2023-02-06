@@ -46,7 +46,7 @@ public class KiaBot extends TelegramLongPollingBot {
             if (update.getMessage().hasText()) {
                 String text = update.getMessage().getText();
 
-                if (text.equals("/start")){
+                if (text.equals("/start")) {
                     botService.welcomeText(update);
                 }
 
@@ -67,13 +67,22 @@ public class KiaBot extends TelegramLongPollingBot {
 
                 if (data.startsWith("language#")) {
                     execute(botService.deleteTopMessage(update));
-                    botService.setLang(update, data.endsWith("uzbek") ? "uz": "ru");
-                } else if (data.startsWith("location#")){
+                    botService.setLang(update, data.endsWith("uzbek") ? "uz" : "ru");
+                } else if (data.startsWith("location#")) {
                     execute(botService.deleteTopMessage(update));
-                    botService.sendLocation(update, data.endsWith("uz") ? "uz": "ru");
-                } else if (data.startsWith("models#")){
+                    botService.sendLocation(update, data.endsWith("uz") ? "uz" : "ru");
+                } else if (data.startsWith("models#")) {
                     execute(botService.deleteTopMessage(update));
-                    botService.getModels(update, data.endsWith("uz") ? "uz": "ru");
+                    botService.getModels(update, data.endsWith("uz") ? "uz" : "ru");
+                } else if (data.startsWith("modelInfo#")) {
+                    execute(botService.deleteTopMessage(update));
+                    botService.getModifications(update, data.endsWith("uz") ? "uz" : "ru");
+                } else if (data.startsWith("gomenu#")) {
+                    execute(botService.deleteTopMessage(update));
+                    botService.goMenu(update, data.endsWith("uz") ? "uz" : "ru");
+                } else if (data.startsWith("automodificationinfo#")){
+                    execute(botService.deleteTopMessage(update));
+                    botService.autoModification(update, data.endsWith("uz") ? "uz" : "ru");
                 }
 
             } catch (Exception e) {

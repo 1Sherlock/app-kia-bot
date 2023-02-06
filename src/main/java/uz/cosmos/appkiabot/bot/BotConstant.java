@@ -43,4 +43,16 @@ public interface BotConstant {
 
     String CHOOSEMODELUZ = "Iltimos, kerakli modelni tanlang:";
     String CHOOSEMODELRU = "Пожалуйста, выберите модель:";
+
+    String BACKUZ = "◀️Orqaga";
+    String BACKRU = "◀️Назад";
+
+    String NAMEUZ = "Nomi: ";
+    String NAMERU = "Название: ";
+
+    String PRICEUZ = "Narxi: ";
+    String PRICERU = "Цена: ";
+
+    String MODIFICATIONSRU = "Модификации: ";
+    String MODIFICATIONSUZ = "Modifikatsiyalari: ";
 }

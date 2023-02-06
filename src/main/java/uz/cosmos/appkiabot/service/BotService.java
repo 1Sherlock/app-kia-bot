@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Contact;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -15,13 +17,19 @@ import uz.cosmos.appkiabot.entity.TelegramChat;
 import uz.cosmos.appkiabot.entity.enums.TelegramChatStatus;
 import uz.cosmos.appkiabot.payload.ResKia;
 import uz.cosmos.appkiabot.payload.ResKiaModel;
+import uz.cosmos.appkiabot.payload.ResKiaModelInfo;
+import uz.cosmos.appkiabot.payload.ResKiaModification;
 import uz.cosmos.appkiabot.repository.TelegramChatRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class BotService {
@@ -140,5 +148,62 @@ public class BotService {
 
         sendMessage.setReplyMarkup(buttonService.sendModels(modelList, lang));
         kiaBot.execute(sendMessage);
+    }
+
+    public void getModifications(Update update, String lang) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, TelegramApiException {
+        String data = update.getCallbackQuery().getData();
+        String[] split = data.split("#");
+        String modelUrl = split[1];
+//        String modelImage = split[2];
+
+        ResKiaModelInfo modelInfo = requestService.getModelInfo(modelUrl);
+
+//        SendPhoto sendPhoto = new SendPhoto();
+
+//        sendPhoto.setChatId(String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
+//        sendPhoto.setPhoto(new InputFile(modelImage));
+//        kiaBot.execute(sendPhoto);
+
+        StringBuilder modifications = new StringBuilder();
+        for (ResKiaModification modification : modelInfo.getCompls()) {
+            modifications.append(lang.equals("ru") ?
+                    BotConstant.NAMERU + "<b>" + modification.getName() + "</b>" + "\n" +
+                            BotConstant.PRICERU + "<b>" + getBeautifulNumber(new BigDecimal(modification.getPrice()).setScale(2, RoundingMode.HALF_UP), lang) + "</b>" + "\n":
+                    BotConstant.NAMEUZ + "<b>" + modification.getName() + "</b>" + "\n" +
+                            BotConstant.PRICEUZ + "<b>" + getBeautifulNumber(new BigDecimal(modification.getPrice()).setScale(2, RoundingMode.HALF_UP), lang) + "</b>" + "\n").append("\n");
+        }
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
+        sendMessage.setParseMode("html");
+
+        sendMessage.setText(lang.equals("ru") ?
+                BotConstant.NAMERU + "<b>" + modelInfo.getName() + "</b>" + "\n\n" +
+                        "<b>" + BotConstant.MODIFICATIONSRU + "</b>\n\n" + modifications + "" :
+                BotConstant.NAMEUZ + "<b>" + modelInfo.getName() + "</b>" + "\n" + "\n" +
+                        "<b>" + BotConstant.MODIFICATIONSUZ + "</b>\n\n" + modifications + "" );
+
+        sendMessage.setReplyMarkup(buttonService.autoModelGoBack(lang, modelUrl, modelInfo));
+        kiaBot.execute(sendMessage);
+    }
+
+    public void goMenu(Update update, String language) throws TelegramApiException {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(update.getCallbackQuery().getMessage().getChatId()));
+        sendMessage.setText((language.equals("ru") ? BotConstant.MENUTEXTRU : BotConstant.MENUTEXTUZ));
+        boolean isAdmin = update.getCallbackQuery().getMessage().getChatId().equals(273769261L);
+        sendMessage.setReplyMarkup(buttonService.menuButton(language, isAdmin));
+        kiaBot.execute(sendMessage);
+    }
+
+    public String getBeautifulNumber(BigDecimal number, String language) {
+        Locale locale = new Locale("uz", "UZ");
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
+        String format = numberFormat.format(number);
+
+        return language.equals("ru") ? format.replace("soʻm", "сум") : format;
+    }
+
+    public void autoModification(Update update, String lang) {
+
     }
 }

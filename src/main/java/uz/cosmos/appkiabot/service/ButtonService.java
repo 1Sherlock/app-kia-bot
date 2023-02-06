@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import uz.cosmos.appkiabot.bot.BotConstant;
 import uz.cosmos.appkiabot.payload.ResKiaModel;
+import uz.cosmos.appkiabot.payload.ResKiaModelInfo;
+import uz.cosmos.appkiabot.payload.ResKiaModification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,8 +108,35 @@ public class ButtonService {
             rows.add(row);
             row = new ArrayList<>();
         }
+        row.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, "gomenu#", lang));
+        rows.add(row);
 
         replyKeyboardMarkup.setKeyboard(rows);
         return replyKeyboardMarkup;
+    }
+
+    public ReplyKeyboard autoModelGoBack(String lang, String modelUrl, ResKiaModelInfo modelInfo) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
+        List<InlineKeyboardButton> row2 = new ArrayList<>();
+        List<InlineKeyboardButton> row3 = new ArrayList<>();
+        List<InlineKeyboardButton> row4 = new ArrayList<>();
+
+        for (ResKiaModification autoModification : modelInfo.getCompls()) {
+            row.add(generateButton(autoModification.getName(), autoModification.getName(), "automodificationinfo#" + modelUrl + "#" + autoModification.getName(), lang));
+            rows.add(row);
+            row = new ArrayList<>();
+        }
+
+        row.add(generateButton(BotConstant.BACKUZ, BotConstant.BACKRU, "models#" , lang));
+
+        rows.add(row);
+
+        inlineKeyboardMarkup.setKeyboard(rows);
+        return inlineKeyboardMarkup;
     }
 }
