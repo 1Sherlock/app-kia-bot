@@ -939,4 +939,11 @@ public class BotService {
     }
 
 
+    public void nasiaInfo(Update update, String lang) throws TelegramApiException {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(String.valueOf(update.getMessage().getChatId()));
+        sendMessage.setText(lang.equals("ru") ? BotConstant.KREDITFIRSTSUMMRU : BotConstant.KREDITFIRSTSUMMUZ);
+        sendMessage.setReplyMarkup(buttonService.sendNasiaFirstSumm(lang));
+        kiaBot.execute(sendMessage);
+    }
 }

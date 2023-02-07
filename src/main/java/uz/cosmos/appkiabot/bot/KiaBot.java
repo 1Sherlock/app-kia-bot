@@ -138,6 +138,9 @@ public class KiaBot extends TelegramLongPollingBot {
                 }else if (data.startsWith("avtocreditcalc#")){
                     execute(botService.deleteTopMessage(update));
                     botService.calcCredit(update, (data.endsWith("uz") ? "uz" : "ru"), data);
+                } else if (data.startsWith("nasiyamodifications#")){
+                    execute(botService.deleteTopMessage(update));
+                    botService.nasiaInfo(update, (data.endsWith("uz") ? "uz" : "ru"));
                 }
 
             } catch (Exception e) {

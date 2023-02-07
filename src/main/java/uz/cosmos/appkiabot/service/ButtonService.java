@@ -292,4 +292,8 @@ public class ButtonService {
         inlineKeyboardMarkup.setKeyboard(rows);
         return inlineKeyboardMarkup;
     }
+
+    public ReplyKeyboard sendNasiaFirstSumm(String lang) {
+        return null;
+    }
 }
