@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import uz.cosmos.appkiabot.bot.BotConstant;
 import uz.cosmos.appkiabot.entity.AutoModel;
 import uz.cosmos.appkiabot.entity.AutoModification;
-import uz.cosmos.appkiabot.payload.ResKiaModification;
 
 import java.util.ArrayList;
 import java.util.List;

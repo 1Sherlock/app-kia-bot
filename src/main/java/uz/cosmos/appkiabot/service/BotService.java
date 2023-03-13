@@ -299,20 +299,24 @@ public class BotService {
                 for (ResKiaModel resKiaModel : models1) {
 
 
-                    ResKiaModelInfo modelInfo = requestService.getModelInfo(resKiaModel.getUrl());
-                    if (resKiaModel.getSoon() == 0 && resKiaModel.getTesting() == 0) {
-                        AutoModel save = autoModelRepository.save(new AutoModel(resKiaModel.getName(), resKiaModel.getName(), resKiaModel.getImage(), resKiaModel.getMinPrice() != null ? Integer.parseInt(resKiaModel.getMinPrice()) : 0, modelInfo.getPdf()));
+                    try {
+                        ResKiaModelInfo modelInfo = requestService.getModelInfo(resKiaModel.getUrl());
+                        if (resKiaModel.getSoon() == 0 && resKiaModel.getTesting() == 0) {
+                            AutoModel save = autoModelRepository.save(new AutoModel(resKiaModel.getName(), resKiaModel.getName(), resKiaModel.getImage(), resKiaModel.getMinPrice() != null ? Integer.parseInt(resKiaModel.getMinPrice()) : 0, modelInfo.getPdf()));
 
-                        for (ResKiaModification compl : modelInfo.getCompls()) {
+                            for (ResKiaModification compl : modelInfo.getCompls()) {
 
-                            StringBuilder content = new StringBuilder();
-                            for (String option : compl.getOptions()) {
-                                content.append(option).append("\n");
+                                StringBuilder content = new StringBuilder();
+                                for (String option : compl.getOptions()) {
+                                    content.append(option).append("\n");
+                                }
+                                String price = compl.getPrice();
+
+                                autoModificationRepository.save(new AutoModification(compl.getName() + resKiaModel.getName(), compl.getName(), price, content.toString(), save));
                             }
-                            String price = compl.getPrice();
-
-                            autoModificationRepository.save(new AutoModification(compl.getName() + resKiaModel.getName(), compl.getName(), price, content.toString(), save));
                         }
+                    } catch (Exception e){
+                        continue;
                     }
                 }
             }
